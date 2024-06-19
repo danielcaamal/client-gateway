@@ -15,6 +15,8 @@ export class CustomRPCExceptionFilter implements ExceptionFilter {
         message: rpcError.message,
       });
     }
+
+    console.log('RPC Error:', rpcError);
     return response.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
