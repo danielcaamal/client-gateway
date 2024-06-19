@@ -1,3 +1,4 @@
+import { catchError, firstValueFrom } from 'rxjs';
 import {
   Body,
   Controller,
@@ -11,11 +12,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { catchError, firstValueFrom } from 'rxjs';
+
 import { PaginationDto } from 'src/common';
 import { PRODUCT_SERVICE } from 'src/config';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto, UpdateProductDto } from './dto';
 
 @Controller('products')
 export class ProductsController {
