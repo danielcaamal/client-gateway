@@ -12,18 +12,16 @@ import {
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 
-import { ORDER_SERVICE } from 'src/config';
+import { NATS_SERVICE } from 'src/config';
 import { ChangeOrderStatusDto, CreateOrderDto, FilterOrderDto } from './dto';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    @Inject(ORDER_SERVICE) private readonly ordersClient: ClientProxy,
-  ) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
   @Get()
   async getOrders(@Query() filterOrderDto: FilterOrderDto) {
-    return this.ordersClient
+    return this.client
       .send(
         { cmd: 'find_all_orders' },
         {
@@ -39,7 +37,7 @@ export class OrdersController {
 
   @Get(':id')
   async getOrder(@Param('id', ParseUUIDPipe) id: string) {
-    return this.ordersClient
+    return this.client
       .send(
         { cmd: 'find_one_order' },
         {
@@ -55,7 +53,7 @@ export class OrdersController {
 
   @Post()
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersClient
+    return this.client
       .send(
         { cmd: 'create_order' },
         {
@@ -74,7 +72,7 @@ export class OrdersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() changeOrderStatus: ChangeOrderStatusDto,
   ) {
-    return this.ordersClient
+    return this.client
       .send(
         { cmd: 'change_order_status' },
         {
