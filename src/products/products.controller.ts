@@ -107,4 +107,13 @@ export class ProductsController {
         }),
       );
   }
+
+  @Post('populate')
+  async populateProducts() {
+    return this.client.send({ cmd: 'populate_products' }, {}).pipe(
+      catchError((error) => {
+        throw new RpcException(error);
+      }),
+    );
+  }
 }
