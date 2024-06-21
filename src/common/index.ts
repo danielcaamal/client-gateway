@@ -1,2 +1,2 @@
 export * from './dto/pagination.dto';
-export * from './filters/rpc-exception.filter';
+export * from './filters/all-exception.filter';
