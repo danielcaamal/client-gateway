@@ -1,16 +1,33 @@
-import { Catch, ArgumentsHost, ExceptionFilter } from '@nestjs/common';
+import {
+  Catch,
+  ArgumentsHost,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost): Observable<any> {
-    console.log('AllExceptionsFilter');
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
+
+    if (exception instanceof HttpException) {
+      return response.status(exception.getStatus()).json({
+        ...(exception.getResponse() as object),
+        message:
+          exception.getResponse()['message'] instanceof String
+            ? exception.getResponse()['message']
+            : exception.getResponse()['message'] instanceof Array
+              ? exception.getResponse()['message'].join('\n')
+              : 'Contact support for more information.',
+      });
+    }
+
     if (
       typeof exception === 'object' &&
       exception.message &&
-      exception.status
+      Number(exception.status)
     ) {
       return response.status(exception.status).json({
         statusCode: exception.status,
@@ -18,7 +35,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       });
     }
 
-    console.log('Exception:', exception);
+    console.log(exception);
+
     return response.status(500).json({
       statusCode: 500,
       message: 'Internal server error',
